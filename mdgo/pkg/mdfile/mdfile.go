@@ -55,7 +55,9 @@ func GetAllPictureLinks(mdFilename string) ([]string, error) {
 		match := reg.Match(line)
 		if match && !inCodeBlock {
 			link := GetPictureLink(string(line))
-			res = append(res, link)
+			if len(link) != 0 {
+				res = append(res, link)
+			}
 		}
 	}
 
@@ -127,6 +129,9 @@ func ModifyAllPictureLines(mdFilename, prefix string) error {
 // GetNewPictureLine returns the new picture line.
 func GetNewPictureLine(line, prefix string) (string, error) {
 	oldLink := GetPictureLink(line)
+	if len(oldLink) == 0 {
+		return "", fmt.Errorf("failed to get picture link from \"%s\"", line)
+	}
 	if IsHttpLink(prefix) {
 		u, err := url.Parse(prefix)
 		if err != nil {
