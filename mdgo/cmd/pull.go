@@ -24,8 +24,9 @@ type Pull struct {
 var pullOpts = &PullOptions{}
 
 var pullCmd = &cobra.Command{
-	Use:  "pull",
-	Args: cobra.MinimumNArgs(1),
+	Use:   "pull",
+	Args:  cobra.MinimumNArgs(1),
+	Short: "pull all pictures used by markdown file to a directory and can update the picture links",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		pull := &Pull{
 			Options: *pullOpts,

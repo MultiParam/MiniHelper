@@ -8,8 +8,7 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use:   "mdgo",
-	Short: "",
-	Long:  "",
+	Short: "mdgo can push or pull pictures used by markdown file",
 }
 
 func Execute() {

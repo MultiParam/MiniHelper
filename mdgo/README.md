@@ -17,30 +17,27 @@
 ## Use cases
 ```bash
 # 根据 config.yaml 中的配置信息将 demo.md 中引用的图片统一上传到图床中，并且更新文档中对图片的引用为图床中的 URL
-mdgo push demo.md -c config.yaml
-
-# 根据 config.yaml 中的配置信息将 demo 目录中所有的 markdown 文件中引用的图片统一上传到图床中，并且更新文档中对图片的引用为图床中的 URL
-mdgo push demo -c config.yaml 
+mdgo push demo.md demo2.md -c config.yaml
 
 # 将 deme.md 中引用的图片统一 pull 到 ./images 目录
-mdgo pull demo.md --path ./images
-
-# 将 demo 目录中所有的 markdown 文件中引用的图片统一 pull 到 ./images 目录中
-mdgo pull demo --path demo/images
+mdgo pull demo.md demo2.md --path ./images
 
 # 下载并且更新引用
 mdgo pull demo.md --path ./images --update
 
+## ToDo
+# 考虑，可以上传/下载整个目录中的 markdown 文件所使用的图片
 # 在 markdown 引用了本地图片的情况下，后续准备考虑一键清理本地未引用的链接；
 # 同理，在全都 push 到图床之后，可以考虑一键清理图床中未引用的图片；
 ```
 
 ```yaml
 # config.yaml
-PictureBed: 
-  EndPoint: ""
-  OSSBucket: ""
-  AccessKeyId: ""
-  AccessKeySecret: ""
+pushOptions: 
+  endPoint: ""
+  bucketName: ""
+  accessID: ""
+  accessKey: ""
+  path: ""
+  domain: "https://blog.dawnguo.cn"
 ```
-

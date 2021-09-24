@@ -34,8 +34,9 @@ const TempPicDir = "./temp-mdgo-pics"
 var pushOpts = &PushOptions{}
 
 var pushCmd = &cobra.Command{
-	Use:  "push",
-	Args: cobra.MinimumNArgs(1),
+	Use:   "push",
+	Args:  cobra.MinimumNArgs(1),
+	Short: "push all pictures used by markdown file to picture bed and update the picture links",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		push := &Push{
 			Options: *pushOpts,
@@ -157,7 +158,7 @@ func (push *Push) Push(file string, picBed *oss.OSSPictureBed) error {
 	}
 
 	for _, link := range links {
-		fmt.Println(link)
+		fmt.Println(file, link)
 
 		// 处理网络链接的情况
 		if mdfile.IsHttpLink(link) {
