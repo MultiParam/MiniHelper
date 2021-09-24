@@ -14,7 +14,7 @@ import (
 	"strings"
 )
 
-const PictureFormat = ".*!\\[.*\\](.*).*" // markdown image link format
+const PictureFormat = ".*(!\\[.*\\]\\(.*\\))|(\\<img.*\\>).*" // markdown image link format
 const TempFileName = ".temp.md"
 
 // GetAllPictureLinks returns all the picture links from the file named mdfileName.
@@ -33,6 +33,8 @@ func GetAllPictureLinks(mdFilename string) ([]string, error) {
 		return []string{}, err
 	}
 
+	inCodeBlock := false
+
 	for true {
 		line, _, err := reader.ReadLine()
 
@@ -44,8 +46,14 @@ func GetAllPictureLinks(mdFilename string) ([]string, error) {
 			return []string{}, err
 		}
 
+		if strings.HasPrefix(string(line), "```") && !inCodeBlock {
+			inCodeBlock = true
+		} else if string(line) == "```" && inCodeBlock {
+			inCodeBlock = false
+		}
+
 		match := reg.Match(line)
-		if match {
+		if match && !inCodeBlock {
 			link := GetPictureLink(string(line))
 			res = append(res, link)
 		}
@@ -76,6 +84,8 @@ func ModifyAllPictureLines(mdFilename, prefix string) error {
 		return err
 	}
 
+	inCodeBlock := false
+
 	for true {
 		line, _, err := reader.ReadLine()
 
@@ -87,8 +97,14 @@ func ModifyAllPictureLines(mdFilename, prefix string) error {
 			return err
 		}
 
+		if strings.HasPrefix(string(line), "```") && !inCodeBlock {
+			inCodeBlock = true
+		} else if string(line) == "```" && inCodeBlock {
+			inCodeBlock = false
+		}
+
 		match := reg.Match(line)
-		if match {
+		if match && !inCodeBlock {
 			newLine, err := GetNewPictureLine(string(line), prefix)
 			if err != nil {
 				return err
@@ -130,6 +146,10 @@ func GetNewPictureLine(line, prefix string) (string, error) {
 
 // GetPictureLink returns the picture link from line.
 func GetPictureLink(line string) string {
+	if strings.Contains(line, "<img") {
+		return strings.Split(strings.Split(line, "src=\"")[1], "\"")[0]
+	}
+
 	return strings.Split(strings.Split(line, "](")[1], ")")[0]
 }
 
