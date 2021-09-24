@@ -122,7 +122,10 @@ func GetNewPictureLine(line, prefix string) (string, error) {
 		return newLine, nil
 	}
 
-	return "", nil
+	path := filepath.Join(prefix, filepath.Base(oldLink))
+	newLine := strings.Replace(line, oldLink, path, -1)
+
+	return newLine, nil
 }
 
 // GetPictureLink returns the picture link from line.
@@ -139,6 +142,7 @@ func DownloadPic(picURL, path string) error {
 	if err != nil {
 		return err
 	}
+	defer resp.Body.Close()
 
 	if !strings.HasPrefix(resp.Status, "200") {
 		return fmt.Errorf("download pic %s error, the status of respond is %s", picURL, resp.Status)
@@ -171,4 +175,37 @@ func PathExists(path string) bool {
 	}
 
 	return true
+}
+
+func CopyRegularFile(src, dst string) error {
+	if src == dst {
+		return nil
+	}
+
+	srcFileStat, err := os.Stat(src)
+	if err != nil {
+		return err
+	}
+
+	if !srcFileStat.Mode().IsRegular() {
+		return fmt.Errorf("%s is not a regular file", src)
+	}
+
+	srcFile, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer srcFile.Close()
+
+	dstFile, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer dstFile.Close()
+
+	if _, err := io.Copy(dstFile, srcFile); err != nil {
+		return err
+	}
+
+	return nil
 }
